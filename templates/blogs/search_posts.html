@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<title>{% block title %}Search{% endblock %}</title>
+    {% if searchedPosts %}
+    <center><h1>Post Search results for: {{ searchedPosts }}</h1></center>
+        {% for post in posts %}
+            <div class="post block">
+                <h2 class="subtitle">{{post.title}}</h2>
+
+                <small>Posted by {{post.authorEmail}} at {{ post.date_added }}</small>
+
+                <p>{{post.intro}}</p>
+                <a href="{% url 'blogs:postDetail' post.id %}">Read More</a>
+            </div>
+        {% endfor %}
+
+    {% else %}
+            <h1>Search value is empty!</h1>
+    {% endif %}
+
+{% if user.is_authenticated %}
+    <p>Have an Idea for a blog?<a href="{% url 'blogs:create_post' %}"> Post it!</a>
+{% else %}
+<p>You are not logged in. You must log in to create a blog post.</p>
+<a href="{% url 'users:login' %}">Log In</a>
+{% endif %}
+{% endblock %}

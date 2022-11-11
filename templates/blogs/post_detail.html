@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class ="text-center">
+    <img src="{{post.picture.url}}" class="img-fluid"></img>
+    </div>
+    <h1 class="title">{{post.title}}</h1>
+    {% for profile in profile_list %}
+        {% if profile.user == post.authorEmail %}
+        <small>Posted by {{profile.first_name}} {{profile.last_name}} at {{ post.date_added }}</small>
+        {% endif %}
+    {% endfor %}
+
+    <p><strong>{{ post.intro }}</strong></p>
+
+    <p>{{ post.body }}</p>
+
+    <hr>
+
+    <h2 class="subtitle">Comments</h2>
+    {% for comment in post.comments.all %}
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <p>
+                            <strong>{{ comment.author }}</strong> <small>{{ comment.date_added }}</small>
+                            <br>
+                            {{ comment.body }}
+                        </p>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div class="notification">
+                <p>No comments yet!</p>
+            </div>
+        {% endfor %}
+    
+{% if user.is_authenticated and user == post.authorEmail%}
+    <a class="btn btn-primary" href="{% url 'blogs:postModify' post.id  %}">Modify Post</a>
+    <a class="btn btn-danger" href="{% url 'blogs:postDelete' post.id  %}">Delete Post</a>
+    <p>Commenting as <strong>{{user}}</strong></p>
+    <h3 class="subtitle">Add comment</h3>
+        <form method="post" action=".">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="field">
+                <div class="control">
+                    <button class="button is-success">Submit</button>
+                </div>
+            </div>
+        </form>
+        <form action="{% url 'blogs:like_post' post.id %}" method='POST'> {% comment %}Like Form Input{% endcomment %}
+            {% csrf_token %}
+            {% if isLiked %}
+                <button type='submit', name='post_id', value='{{post.id}}',
+                class ="btn btn-danger btn-sm">Unlike</button>
+            {% else %}
+                <button type='submit', name='post_id', value='{{post.id}}',
+                class ="btn btn-primary btn-sm">Like</button>
+            {% endif %}
+{% elif user.is_authenticated %}
+    <p>Commenting as <strong>{{user}}</strong></p>
+    <h3 class="subtitle">Add comment</h3>
+        <form method="post" action="."> {% comment %}Comment Form Input{% endcomment %}
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="field">
+                <div class="control">
+                    <button class="button is-success">Submit</button>
+                </div>
+            </div>
+        </form>
+    <br>
+        <form action="{% url 'blogs:like_post' post.id %}" method='POST'> {% comment %}Like Form Input{% endcomment %}
+            {% csrf_token %}
+            {% if isLiked %}
+                <button type='submit', name='post_id', value='{{post.id}}',
+                class ="btn btn-danger btn-sm">Unlike</button>
+            {% else %}
+                <button type='submit', name='post_id', value='{{post.id}}',
+                class ="btn btn-primary btn-sm">Like</button>
+            {% endif %}
+{% else %}
+    <p>You are not logged in. You must log in to comment and modify own posts.</p>
+    <a href="{% url 'users:login' %}">Log In</a>
+{% endif %}
+- {{ totalLikes }} Likes
+{% endblock %}
+

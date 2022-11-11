@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Create Post</h1>
+<form action="{% url 'blogs:create_post' %}" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" id="submit">Create Post</button>
+</form>
+{% endblock %}

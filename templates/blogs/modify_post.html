@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Modify Post</h1>
+<div class='align-center'>
+    <br><br>
+    <div class="form-group">
+        <form action="{% url 'blogs:postModify' post.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class ="btn btn-secondary">Update Post</button>
+            {% comment %} <button type="submit" id="submit">Update Post</button> {% endcomment %}
+        </form>
+    </div>
+</div>
+{% endblock %}
